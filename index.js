@@ -6,38 +6,36 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-// eslint-disable-next-line no-empty-function
-function AssetTagToShopifyLiquid() {}
+class AssetTagToShopifyLiquid {
+  apply (compiler) {
+    compiler.hooks.compilation.tap('Assets Tag Plugin', (compilation) => {
+      HtmlWebpackPlugin.getHooks(compilation).alterAssetTagGroups.tapAsync(
+        'AssetTagToShopifyLiquid',
+        (data, callback) => {
+          data.headTags = data.headTags.map(this.fixTag);
+          data.bodyTags = data.bodyTags.map(this.fixTag);
 
-AssetTagToShopifyLiquid.prototype.apply = (compiler) => {
-  compiler.hooks.compilation.tap('Assets Tag Plugin', (compilation) => {
-    // https://github.com/jantimon/html-webpack-plugin#events
-    compilation.hooks.htmlWebpackPluginAlterAssetTags.tap(
-      'AssetTagToShopifyLiquid',
-      (data) => {
-        function fixTag(tag) {
-          if (tag.tagName === 'script') {
-            tag.attributes.src = `{{ '${path.basename(
-              tag.attributes.src,
-            )}' | asset_url  }}`;
-          }
+          callback(null, data);
+        },
+      );
+    });
+  }
 
-          if (tag.tagName === 'link') {
-            tag.attributes.href = `{{ '${path.basename(
-              tag.attributes.href,
-            )}' | asset_url  }}`;
-          }
+  fixTag(tag) {
+    if (tag.tagName === 'script') {
+      tag.attributes.src = `{{ '${path.basename(
+        tag.attributes.src,
+      )}' | asset_url  }}`;
+    }
 
-          return tag;
-        }
+    if (tag.tagName === 'link') {
+      tag.attributes.href = `{{ '${path.basename(
+        tag.attributes.href,
+      )}' | asset_url  }}`;
+    }
 
-        data.head = data.head.map(fixTag);
-        data.body = data.body.map(fixTag);
-
-        return data;
-      },
-    );
-  });
+    return tag;
+  }
 };
 
 module.exports = AssetTagToShopifyLiquid;

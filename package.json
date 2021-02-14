@@ -9,5 +9,8 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Shopify/slate/issues"
+  },
+  "devDependencies": {
+    "html-webpack-plugin": "^5.1.0"
   }
 }
