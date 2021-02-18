@@ -25,13 +25,13 @@ class AssetTagToShopifyLiquid {
     if (tag.tagName === 'script') {
       tag.attributes.src = `{{ '${path.basename(
         tag.attributes.src,
-      )}' | asset_url  }}`;
+      )}' | asset_url | script_tag }}`;
     }
 
     if (tag.tagName === 'link') {
       tag.attributes.href = `{{ '${path.basename(
         tag.attributes.href,
-      )}' | asset_url  }}`;
+      )}' | asset_url | stylesheet_tag }}`;
     }
 
     return tag;
